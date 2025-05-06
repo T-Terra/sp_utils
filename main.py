@@ -21,13 +21,15 @@ def main():
         restart_pc()
     
     if args.ip:
-        ip_config()
-        dns_config()
+        get_interface()
+        interface = str(input("Digite o nome da interface: ")).strip()
+        ip_config(interface)
+        dns_config(interface)
         print("Configurações de rede aplicadas com sucesso!")
     
     if args.all:
         all_config()
-        
+    
     
 if __name__ == '__main__':
     main()

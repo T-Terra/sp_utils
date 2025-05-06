@@ -6,4 +6,4 @@ def run(cmd):
 
 def run_cmd(cmd):
     """Executa comando no CMD"""
-    return subprocess.run(cmd, shell=True)
+    return subprocess.run(cmd, capture_output=True, text=True, shell=True)

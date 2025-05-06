@@ -2,7 +2,6 @@ import os
 from src.utils.terminal import run_cmd, run
 from time import sleep
 
-interface = "Ethernet"
 
 def rename(newname: str):
     oldname = os.environ['COMPUTERNAME']
@@ -81,18 +80,20 @@ def all_config():
     firewall_deactivate()
     power_options()
     logon_deactivate()
-    ip_config()
-    dns_config()
+    get_interface()
+    interface = str(input("Digite o nome da interface: ")).strip()
+    ip_config(interface)
+    dns_config(interface)
     restart_pc()
 
-def ip_config():
+def ip_config(interface: str):
     ip = str(input("Digite o ip ex[192.168.1.100]: ")).strip()
     mask = "255.255.255.0"
     gateway = str(input("Digite o gateway padrão ex[192.168.1.1]: ")).strip()
     command_ip = f"netsh interface ip set address name={interface} static {ip} {mask} {gateway}"
     run_cmd(command_ip)
 
-def dns_config():
+def dns_config(interface: str):
     dns_first = str(input("Digite o DNS 1 ex[8.8.8.8]: ")).strip()
     dns_second = str(input("Digite o DNS 2 ex[8.8.4.4]: ")).strip()
 
@@ -103,3 +104,19 @@ def dns_config():
     command_dns_second = f"netsh interface ip add dnsservers name={interface} address={dns_second}"
 
     run_cmd(command_dns_second)
+
+def get_interface():
+    result = run_cmd("netsh interface show interface")
+    interface_names = []
+
+    if result.returncode == 0:
+        lines = result.stdout.strip().splitlines()
+        name_i = lines[2:][0].split(" ")[-1]
+        interface_names.append(name_i)
+
+        print("Interfaces encontradas:")
+        for name in interface_names:
+            print(name)
+    else:
+        print("Erro ao executar o comando:")
+        print(result.stderr)
